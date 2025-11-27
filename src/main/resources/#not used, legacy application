@@ -1,0 +1,36 @@
+
+
+spring.application.name=backend
+
+server.port=8080
+spring.profiles.active=dev
+
+# --- DataSource(PostgreSQL Docker) ---
+spring.datasource.url=jdbc:postgresql://localhost:5432/ec
+spring.datasource.username=ec
+spring.datasource.password=ec
+
+# --- JPA ---
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.open-in-view=false
+spring.jpa.properties.hibernate.format_sql=true
+
+# --- Flyway ---
+spring.flyway.enabled=true
+spring.flyway.locations=classpath:db/migration
+spring.flyway.baseline-on-migrate=true
+spring.flyway.clean-disabled=false
+spring.flyway.validate-on-migrate=true
+
+# --- Springdoc(OpenAPI/Swagger) ---
+springdoc.api-docs.path=/v3/api-docs
+springdoc.swagger-ui.path=/swagger-ui.html
+springdoc.swagger-ui.operationsSorter=alpha
+springdoc.swagger-ui.tagsSorter=alpha
+
+management.endpoints.web.exposure.include=health,info
+
+jwt.issuer=ec-app
+jwt.expiry-minutes=120
+jwt.secret=CHANGE_ME_TO_A_LONG_RANDOM_SECRET_64+CHARS_LONG________________________________
+

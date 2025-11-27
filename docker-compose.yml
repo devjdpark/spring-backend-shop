@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: ec-postgres
+    environment:
+      POSTGRES_DB: ec
+      POSTGRES_USER: ec
+      POSTGRES_PASSWORD: ec
+      TZ: Asia/Tokyo
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:

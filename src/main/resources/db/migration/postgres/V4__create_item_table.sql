@@ -1,0 +1,8 @@
+CREATE TABLE item (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    price BIGINT NOT NULL,
+    stock INTEGER DEFAULT 0,
+    group_id BIGINT REFERENCES itemgroup(id),
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

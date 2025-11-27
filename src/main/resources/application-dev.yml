@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ec
+    username: ec
+    password: ec
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    enabled: true
+    locations: classpath:db/migration/postgres
+
+app:
+  jwt:
+    secret: "very-secret-key-change-me-please-32bytes"
+    issuer: "jd-app"
+    access-exp-seconds: 3600

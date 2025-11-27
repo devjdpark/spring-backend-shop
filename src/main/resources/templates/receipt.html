@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>領収書</title>
+  <!-- CSSはサーバー側から文字列で渡す -->
+  <style th:utext="${receiptCss}"></style>
+</head>
+<body>
+<div class="page">
+
+  <!-- 1. 上部ヘッダーエリア -->
+  <table class="layout-table header-layout">
+    <tr>
+      <!-- 左：宛先ボックス -->
+      <td class="header-left">
+        <div class="recipient-box">
+          <div class="zip-code">〒[[${r.companyPostCode}]]</div>
+          <div class="address">[[${r.companyAddress}]]</div>
+          <div class="company-name">
+            [[${r.companyName}]] <span class="honorific">御中</span>
+          </div>
+        </div>
+      </td>
+
+      <!-- 中央：タイトル -->
+      <td class="header-center">
+        <h1 class="title-text">領 収 書</h1>
+        <div class="title-underline"></div>
+      </td>
+
+      <!-- 右：領収書No・発行日・発行元 -->
+      <td class="header-right">
+        <table class="meta-table">
+          <tr>
+            <th>領収書No.</th>
+            <td>[[${r.receiptNumber}]]</td>
+          </tr>
+          <tr>
+            <th>発行日</th>
+            <td>[[${r.orderDate}]]</td>
+          </tr>
+        </table>
+
+        <div class="issuer-info">
+          <div class="issuer-name">株式会社サンプルEC</div>
+          <div>〒123-3456</div>
+          <div>東京都XX区XXビル1-2-3</div>
+          <div>TEL: 00-0000-0000</div>
+        </div>
+      </td>
+    </tr>
+  </table>
+
+  <!-- 2. 合計金額エリア（上部の太い帯） -->
+  <div class="total-strip">
+    <table class="total-strip-table">
+      <tr>
+        <!-- 左：捺印枠 -->
+        <td class="total-stamp-cell">
+          <div class="stamp-box-sm">印</div>
+        </td>
+
+        <!-- 中央：合計金額ラベル -->
+        <td class="total-label-cell">
+          <span class="total-label">合計金額</span>
+        </td>
+
+        <!-- 右：合計金額（動的）＋ 税込注記 -->
+        <td class="total-value-cell">
+          <span class="total-value">
+            ￥[[${#numbers.formatInteger(r.total, 0, 'COMMA')}]]
+          </span>
+          <span class="tax-note">（消費税込み）</span>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- 3. 本文：左＝明細 / 右＝備考＋小計・合計 -->
+  <table class="layout-table body-split">
+    <tr>
+
+      <!-- 左側：品目リスト -->
+      <td class="split-left">
+        <table class="detail-table">
+          <thead>
+            <tr>
+              <th class="col-name">品名</th>
+              <th class="col-qty">数量</th>
+              <th class="col-unit">単価</th>
+              <th class="col-amount">金額</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- 購入品リスト -->
+            <tr th:each="item : ${r.items}">
+              <td class="col-name"   th:text="${item.productName}">商品名</td>
+              <td class="col-qty"    th:text="${item.quantity}">1</td>
+              <td class="col-unit"   th:text="${#numbers.formatInteger(item.unitPrice, 0, 'COMMA')}">1,000</td>
+              <td class="col-amount" th:text="${#numbers.formatInteger(item.amount, 0, 'COMMA')}">1,000</td>
+            </tr>
+
+            <!-- 行数を10行に揃えるための空行 -->
+            <tr th:if="${#lists.size(r.items) < 10}"
+                th:each="i : ${#numbers.sequence(1, 10 - #lists.size(r.items))}">
+              <td class="col-name">&#160;</td>
+              <td class="col-qty">&#160;</td>
+              <td class="col-unit">&#160;</td>
+              <td class="col-amount">&#160;</td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+
+      <td class="split-right">
+
+        <!-- 備考欄 -->
+        <div class="note-container">
+          <div class="panel-title">備 考</div>
+          <div class="note-box">
+            <!-- 必要ならサーバー側から備考テキストを渡して表示してもOK -->
+          </div>
+        </div>
+
+        <!-- 小計・送料・合計 ＋ 捺印枠（大） -->
+        <table class="layout-table summary-area">
+          <tr>
+            <td style="vertical-align: bottom;">
+              <table class="summary-table">
+                <tr>
+                  <th>小 計</th>
+                  <td>￥[[${#numbers.formatInteger(r.subTotal, 0, 'COMMA')}]]</td>
+                </tr>
+                <tr>
+                  <th>発送費</th>
+                  <td>￥[[${#numbers.formatInteger(r.shipping, 0, 'COMMA')}]]</td>
+                </tr>
+                <tr class="row-total">
+                  <th>合 計</th>
+                  <td>￥[[${#numbers.formatInteger(r.total, 0, 'COMMA')}]]</td>
+                </tr>
+              </table>
+            </td>
+            <td width="60" align="right"
+                style="vertical-align: bottom; padding-left: 5px;">
+              <div class="stamp-box-lg">
+                <span class="stamp-text">印</span>
+              </div>
+            </td>
+          </tr>
+        </table>
+
+      </td>
+    </tr>
+  </table>
+
+</div>
+</body>
+</html>
