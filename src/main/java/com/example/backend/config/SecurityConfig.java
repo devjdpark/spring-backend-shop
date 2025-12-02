@@ -47,7 +47,7 @@ public class SecurityConfig {
                 // 認証のみ
                 .requestMatchers("/api/users/me").authenticated()
                // .requestMatchers("/api/cart/**", "/api/orders/**").authenticated()
-                .requestMatchers("/api/cart/**", "/api/orders/**").permitAll()
+                        .requestMatchers("/api/cart/**", "/api/orders/**", "/api/mypage/**").permitAll()
                 // 管理者
                 .requestMatchers("/api/admin/**").hasAnyRole("ADMIN","SUPERUSER")
                 .requestMatchers("/api/users/**").hasAnyRole("ADMIN","SUPERUSER")
