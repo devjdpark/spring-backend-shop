@@ -8,6 +8,8 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -56,6 +58,11 @@ public class Order {
   @Column(name = "updated_at", nullable = false)
   private LocalDateTime updatedAt;
 
+  // 注文ステータス
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private OrderStatus status = OrderStatus.ORDERED;
+
   @PrePersist
   void onCreate() {
     this.createdAt = LocalDateTime.now();
@@ -94,4 +101,5 @@ public class Order {
     this.shipping = shipping;
     this.total = itemsTotal + shipping;
   }
+
 }

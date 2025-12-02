@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.backend.dto.MyOrderDetailDto;
+import com.example.backend.dto.MyOrderListDto;
 import com.example.backend.dto.OrderDto;
 import com.example.backend.entity.User;
 import com.example.backend.service.OrderService;
@@ -134,6 +136,36 @@ public class OrderController {
     }
 
 
+    /**
+     * Myページ：注文一覧（軽量DTO版）
+     * GET /api/orders/my
+     */
+    @GetMapping("/my")
+    public ResponseEntity<List<MyOrderListDto>> myOrders(
+            @AuthenticationPrincipal User principal) {
+
+        if (principal == null) {
+            throw new IllegalStateException("未ログインユーザーです。");
+        }
+        Long userId = principal.getId();
+        return ResponseEntity.ok(service.listMyOrders(userId));
+    }
+
+    /**
+     * Myページ：注文詳細
+     * GET /api/orders/my/{id}
+     */
+    @GetMapping("/my/{id}")
+    public ResponseEntity<MyOrderDetailDto> myOrderDetail(
+            @AuthenticationPrincipal User principal,
+            @PathVariable Long id) {
+
+        if (principal == null) {
+            throw new IllegalStateException("未ログインユーザーです。");
+        }
+        Long userId = principal.getId();
+        return ResponseEntity.ok(service.getMyOrderDetail(userId, id));
+    }
 
 
 }

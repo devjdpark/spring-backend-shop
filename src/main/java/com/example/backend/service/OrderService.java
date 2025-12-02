@@ -11,6 +11,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.backend.dto.CartDto;
 import com.example.backend.dto.CartItemDto;
+import com.example.backend.dto.MyOrderDetailDto;
+import com.example.backend.dto.MyOrderListDto;
 import com.example.backend.dto.OrderDto;
 import com.example.backend.dto.OrderItemDto;
 import com.example.backend.entity.Cart;
@@ -220,5 +222,43 @@ public class OrderService {
           o.getTotal(),
           items
       );
+    }
+
+    /** 注文一覧（Myページ用の軽量DTO） */
+    @Transactional(readOnly = true)
+    public List<MyOrderListDto> listMyOrders(Long userId) {
+      return orderRepo.findByUserIdOrderByIdDesc(userId).stream()
+          .map(o -> new MyOrderListDto(
+              o.getId(),
+              o.getCreatedAt(),
+              o.getTotal(),
+              o.getStatus().name()))
+          .toList();
+    }
+
+    /** 注文詳細（Myページ/一般ユーザ用） */
+    @Transactional(readOnly = true)
+    public MyOrderDetailDto getMyOrderDetail(Long userId, Long orderId) {
+      Order o = orderRepo.findByIdAndUserId(orderId, userId)
+          .orElseThrow(() -> new ResponseStatusException(
+              HttpStatus.NOT_FOUND, "注文が見つかりません"));
+
+      var items = o.getItems().stream()
+          .map(oi -> new OrderItemDto(
+              oi.getId(),
+              oi.getProduct().getId(),
+              oi.getProduct().getName(),
+              oi.getUnitPrice(),
+              oi.getQuantity(),
+              oi.getSubTotal()))
+          .toList();
+
+      return new MyOrderDetailDto(
+          o.getId(),
+          o.getCreatedAt(),
+          o.getShipping(),
+          o.getTotal(),
+          o.getStatus().name(),
+          items);
     }
 }

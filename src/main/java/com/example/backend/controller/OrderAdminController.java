@@ -1,51 +1,50 @@
 // com.example.backend.controller.OrderAdminController
 package com.example.backend.controller;
 
-import java.time.LocalDateTime;
-import java.time.YearMonth;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.backend.dto.OrderItemView;
-import com.example.backend.repository.OrderItemRepository;
+import com.example.backend.entity.Order;
+import com.example.backend.entity.OrderStatus;
+import com.example.backend.service.OrderAdminService;
 
 import lombok.RequiredArgsConstructor;
 
 /**
- * 注文（管理者）に関するHTTPエンドポイントを提供するコントローラ。
- * 役割：管理者の監視・集計用の注文参照を提供。計算はサービスで実施。
+ * 注文ヘッダ（管理者用）の管理コントローラ。
+ * 一覧取得・ステータス更新を提供する。
  */
-
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/admin/orders")
 public class OrderAdminController {
 
-  private final OrderItemRepository historyRepo;
+  private final OrderAdminService adminService;
 
-      /**
-     * GET /api/admin/orders を処理する。
-     * 目的：指定ユーザ・月の購入履歴（明細）を取得する。
-     * 例外：権限不足・入力不正は適切なHTTPステータスへ変換。
-     */
+    /** 全注文一覧（ID降順） */
+    @GetMapping
+    public ResponseEntity<List<Order>> listAll() {
+      return ResponseEntity.ok(adminService.listAllOrders());
+    }
 
-  // 月次購入履歴一覧（ユーザ指定可／未指定は全体）
-  @GetMapping("/api/admin/orders")
-  public ResponseEntity<List<OrderItemView>> list(
-      @RequestParam(required = false) Long userId,
-      @RequestParam String ym) {
+    /** ステータス更新 */
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Void> updateStatus(
+        @PathVariable Long id,
+        @RequestBody Map<String, String> body) {
 
-    YearMonth y  = YearMonth.parse(ym);
-    LocalDateTime from = y.atDay(1).atStartOfDay();
-    LocalDateTime to   = y.plusMonths(1).atDay(1).atStartOfDay();
+      String statusStr = body.get("status");
+      OrderStatus status = OrderStatus.valueOf(statusStr);
+      adminService.updateStatus(id, status);
 
-    List<OrderItemView> result = (userId == null)
-        ? historyRepo.findItemsByMonth(from, to)
-        : historyRepo.findItemsByUserAndMonth(userId, from, to);
-
-    return ResponseEntity.ok(result);
-  }
+        return ResponseEntity.ok().build();
+      }
 }

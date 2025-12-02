@@ -14,9 +14,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
   // ユーザ別にID降順で一覧
   List<Order> findByUserIdOrderByIdDesc(Long userId);
 
+  List<Order> findAllByOrderByIdDesc();
   // ユーザ所有の単一注文
   Optional<Order> findByIdAndUserId(Long id, Long userId);
 
   // ユーザに紐づく注文の存在チェック
   boolean existsByUser_Id(Long userId);
+
 }
