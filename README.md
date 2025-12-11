@@ -186,3 +186,62 @@ If the build fails, the pull request will show a failed status, and you can chec
 
 This project is currently for personal study and portfolio use.
 License will be decided later.
+
+
+---日本語---
+
+### プロジェクト概要
+Spring Boot を使用した社内向け EC / 在庫管理バックエンド API です。  
+商品・商品グループ・注文などの基本機能に加え、認証・認可、CI/CD、Docker 実行環境までを含めた「ポートフォリオ用フルスタック基盤」を目的としています。
+
+### 技術スタック
+
+- 言語: Java 21
+- フレームワーク: Spring Boot, Spring Web, Spring Data JPA, Spring Security
+- ビルドツール: Gradle
+- データベース: PostgreSQL (Docker Compose)
+- インフラ:
+  - Docker, Docker Compose
+  - GitHub Actions（CI: Gradle ビルド & テスト）
+  - Docker Hub（アプリケーションイメージの配布）
+- その他: Lombok, Validation, Pageable API など
+
+### 主な機能
+
+- ユーザー / ログイン
+  - Spring Security によるフォームログイン
+  - ロールに応じた API アクセス制御（例：管理者のみ登録・更新可能）
+- 商品管理
+  - `/api/products` 一覧取得（ページング対応）
+  - `/api/products/{id}` 詳細取得
+  - 商品の登録・更新・削除 API（管理者向け）
+- 商品グループ管理
+  - `/api/product-groups` 一覧・登録・更新・削除
+- 注文（Order）API
+  - `/api/orders` での注文登録（※現在実装中／拡張予定）
+  - 在庫数の減算ロジック（購入時に stock を更新）
+
+### アーキテクチャ
+
+- パッケージ構成（レイヤードアーキテクチャ）
+  - `controller` – REST API エンドポイント
+  - `service` – ビジネスロジック
+  - `repository` – DB アクセス(JPA)
+  - `domain` / `entity` – エンティティ定義
+  - `dto` – リクエスト/レスポンス用 DTO
+- エラーハンドリング
+  - 共通例外ハンドラによるエラーレスポンス統一（予定／一部実装）
+
+### ローカル実行方法（開発用）
+
+#### 1. 必要なツール
+
+- JDK 21
+- Docker / Docker Compose
+- Gradle（ラッパー使用）
+
+#### 2. DB 起動（Docker Compose）
+
+```bash
+cd backend
+docker compose up -d
