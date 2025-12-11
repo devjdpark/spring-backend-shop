@@ -48,7 +48,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/users/me").authenticated()
                // .requestMatchers("/api/cart/**", "/api/orders/**").authenticated()
                         .requestMatchers("/api/cart/**", "/api/orders/**", "/api/mypage/**").permitAll()
-                // 管理者
+
+                        // 管理者
                 .requestMatchers("/api/admin/**").hasAnyRole("ADMIN","SUPERUSER")
                 .requestMatchers("/api/users/**").hasAnyRole("ADMIN","SUPERUSER")
                 // ★追加: グループ並び替え確定は管理者のみ
@@ -89,3 +90,4 @@ public class SecurityConfig {
         return source;
     }
 }
+
